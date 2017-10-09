@@ -1,0 +1,103 @@
+---
+:prefixes:
+  :esco: http://data.europa.eu/esco/model#
+  :skos: http://www.w3.org/2004/02/skos/core#
+  :skosxl: http://www.w3.org/2008/05/skos-xl#
+  :dcterms: http://purl.org/dc/terms/
+  :isothes: http://purl.org/iso25964/skos-thes#
+:transformations:
+ # specify transformations as queries
+ # these run until the ask #{until} query returns false
+  :do_until:
+    :no-broader-should-be-top-concept:
+      :query: |
+            INSERT {
+              ?resource skos:topConceptOf ?scheme
+            }
+            WHERE {
+               ?resource skos:inScheme ?scheme.
+               FILTER (NOT EXISTS { ?resource skos:broader ?broader } )
+               FILTER (NOT EXISTS { ?resource skos:topConceptOf ?scheme } )
+            } LIMIT 5000
+      :until: |
+               ?resource skos:inScheme ?scheme.
+               FILTER (NOT EXISTS { ?resource skos:broader ?broader } )
+               FILTER (NOT EXISTS { ?resource skos:topConceptOf ?scheme } )
+    :occupation-concepts-should-be-part-of-member-scheme:
+      :query: |
+            INSERT {
+              ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­occupations>
+            }
+            WHERE {
+               ?resource a esco:Occupation, esco:MemberConcept
+               FILTER (NOT EXISTS { ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­occupations> })
+            } LIMIT 5000
+      :until: |
+               ?resource a esco:Occupation, esco:MemberConcept
+               FILTER (NOT EXISTS { ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­occupations> })
+    :skill-concepts-should-be-part-of-member-scheme:
+      :query: |
+            INSERT {
+              ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­skills>
+            }
+            WHERE {
+               ?resource a esco:Skill, esco:MemberConcept
+               FILTER (NOT EXISTS { ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­skills> })
+            } LIMIT 5000
+      :until: |
+               ?resource a esco:Skill, esco:MemberConcept
+               FILTER (NOT EXISTS { ?resource skos:inScheme <http://data.europa.eu/esco/concept­scheme/member­skills> })
+    :relationship-to-assoc-object:
+      :query: |
+        DELETE {
+          ?resource a esco:Relationship;
+            esco:refersConcept ?concept_a;
+            esco:isRelationshipFor ?concept_b;
+            esco:hasRelationshipType ?type.
+        }
+        INSERT {
+          ?resource a esco:AssociationObject;
+            esco:target ?concept_a;
+            esco:isAssociationFor ?concept_b;
+            dcterms:type ?type;
+            esco:targetFramework ?inscheme_a.
+        }
+        WHERE {
+          { SELECT ?resource WHERE { ?resource a esco:Relationship } LIMIT 5000}
+          ?resource a esco:Relationship;
+            esco:refersConcept ?concept_a;
+            esco:isRelationshipFor ?concept_b;
+            esco:hasRelationshipType ?type.
+          ?concept_a skos:inScheme ?inscheme_a.
+        }
+      :until: |
+           ?resource a esco:Relationship;
+             esco:refersConcept ?concept_a;
+             esco:isRelationshipFor ?concept_b;
+             esco:hasRelationshipType ?type.
+           ?concept_a skos:inScheme ?inscheme_a.
+  :node_literal:
+  # specify the class and property to convert to a NodeLiteral
+    :pillar-descriptions:
+      :class: "esco:MemberConcept"
+      :property: "dcterms:description"
+    :pillar-definitions:
+      :class: "esco:MemberConcept"
+      :property: "skos:definition"
+    :pillar-scopenotes:
+      :class: "esco:MemberConcept"
+      :property: "skos:scopeNote"
+    :pillar-changenotes:
+      :class: "esco:MemberConcept"
+      :property: "skos:changeNote"
+    :pillar-historynotes:
+      :class: "esco:MemberConcept"
+      :property: "skos:historyNote"
+  :inverse:
+  # specify the property and its inverse, the inverse will be added to the dump
+    :broader-to-narrower:
+      :property: "skos:broader"
+      :inverse: "skos:narrower"
+    :topconceptof-hastopconcept:
+      :property: "skos:topConceptOf"
+      :inverse: "skos:hasTopConcept"

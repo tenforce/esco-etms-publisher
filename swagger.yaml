@@ -1,0 +1,154 @@
+swagger: '2.0'
+info:
+  description: This is a microservice that manages publications.
+  version: 1.0.0
+  title: Publications microservice
+  contact:
+    email: support@tenforce.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+schemes:
+  - http
+paths:
+  /publications:
+    post:
+      summary: Create a new publication
+      description: ''
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/Publication'
+      consumes:
+        - application/vnd.api+json
+      produces:
+        - application/vnd.api+json
+      responses:
+        '201':
+          description: created
+          schema:
+            $ref: '#/definitions/Publication'
+        '400':
+          description: Invalid input
+        '503':
+          description: already running
+    get:
+      summary: List publications
+      description: Returns listing of publications
+      produces:
+        - application/vnd.api+json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PublicationList'
+  '/publications/{publicationID}':
+    get:
+      summary: Find publication by publicationID
+      description: Returns a single publication
+      produces:
+        - application/vnd.api+json
+      parameters:
+        - name: publicationID
+          in: path
+          description: ID of publication to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Publication'
+        '404':
+          description: Publication not found
+    delete:
+      summary: Delete a publication by publicationID
+      parameters:
+        - name: publicationID
+          in: path
+          description: ID of publication to return
+          required: true
+          type: string
+      responses:
+        '204':
+          description: successful operation
+        '404':
+          description: Publication not found
+  '/publications/{publicationID}/make-official':
+    post:
+      summary: Find publication by publicationID
+      description: Returns a single publication
+      produces:
+        - application/vnd.api+json
+      parameters:
+        - name: publicationID
+          in: path
+          description: ID of publication to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Publication'
+        '400':
+          description: publication does not have status done
+        '404':
+          description: Publication not found
+  '/publications/{publicationID}/download':
+    get:
+      summary: Retrieve the data dump of a publication
+      description: Returns a single publication
+      produces:
+        - text/plain
+      parameters:
+        - name: publicationID
+          in: path
+          description: ID of publication to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Publication or datadump not found
+definitions:
+  PublicationList:
+    type: array
+    items:
+      $ref: '#/definitions/Publication'
+  Publication:
+    type: object
+    properties:
+      name:
+        type: string
+      issued:
+        type: string
+        format: date-time
+        default: now()
+      created:
+        type: string
+        format: date-time
+        default: now()
+      modified:
+        type: string
+        format: date-time
+        default: now()
+      download:
+        type: string
+        format: url
+      status:
+        type: string
+        default: created
+        enum:
+          - created
+          - running
+          - failed
+          - done
+          - official
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

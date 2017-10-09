@@ -1,0 +1,174 @@
+---
+:prefixes:
+  :esco: http://data.europa.eu/esco/model#
+  :skos: http://www.w3.org/2004/02/skos/core#
+  :skosxl: http://www.w3.org/2008/05/skos-xl#
+  :dcterms: http://purl.org/dc/terms/
+  :isothes: http://purl.org/iso25964/skos-thes#
+  :etms: http://sem.tenforce.com/vocabularies/etms/
+:languages:
+  - fi
+  - sk
+  - da
+  - nl
+  - hu
+  - ga
+  - sl
+  - lt
+  - no
+  - cs
+  - pl
+  - hr
+  - lv
+  - pt
+  - el
+  - es
+  - mt
+  - et
+  - ro
+  - en
+  - fr
+  - is
+  - de
+  - bg
+  - it
+  - sv
+:types:
+  # specify types and their required/optional properties
+  # note rdf:type is always exported
+  :esco:Occupation:
+    :required_properties:
+    - skos:inScheme
+    - skosxl:prefLabel
+    - dcterms:description
+    :optional_properties:
+    # note optionals are slow, so add as few as possible
+    - skos:broader
+    - skos:topConceptOf
+    - skosxl:altLabel
+    - skosxl:hiddenLabel
+    - skos:definition
+    - skos:scopeNote
+    - esco:relevantUrl
+    - dcterms:subject
+    - skos:changeNote
+    - skos:historyNote
+    - dcterms:issued
+    - dcterms:modified
+    - dcterms:replaces
+    - dcterms:isReplacedBy
+    - dcterms:rightsHolder
+    - dcterms:creator
+    - esco:referenceLanguage  # TODO this property is required, but not always present in etms
+    - esco:memberOfIscoGroup  # TODO this property is required, but not always present in etms
+    - isothes:status         # TODO this property is required, but not always present in etms
+    - dcterms:publisher       # TODO this property is required, but not always present in etms
+    :additional_filter: |
+          ?resource etms:hasPublicationStatus ?status.
+          FILTER (?status in (
+          <http://sem.tenforce.com/vocabularies/etms/publicationStatusPublished>,
+          <http://sem.tenforce.com/vocabularies/etms/publicationStatusReady>,
+          <http://sem.tenforce.com/vocabularies/etms/publicationStatusDeprecated>,
+          <http://sem.tenforce.com/vocabularies/etms/publicationStatusReadyForDeprecation>))
+  :esco:Skill:
+    :required_properties:
+    - skos:inScheme
+    - skosxl:prefLabel
+    - dcterms:description
+    :optional_properties:
+    - skos:broader
+    - skos:topConceptOf
+    - skosxl:altLabel
+    - skosxl:hiddenLabel
+    - skos:definition
+    - skos:scopeNote
+    - esco:relevantUrl
+    - dcterms:subject
+    - skos:changeNote
+    - skos:historyNote
+    - dcterms:issued
+    - dcterms:modified
+    - dcterms:replaces
+    - dcterms:isReplacedBy
+    - dcterms:rightsHolder
+    - dcterms:creator
+    - esco:referenceLanguage  # TODO this property is required, but not always present in etms
+    - isothes:status         # TODO this property is required, but not always present in etms
+    - dcterms:publisher       # TODO this property is required, but not always present in etms
+    :additional_filter: ''
+  :skosxl:Label:
+    :required_properties:
+    - skosxl:literalForm
+    :optional_properties:
+    - esco:hasLabelRole
+    :additional_filter: ''
+  :esco:Relationship:
+    :required_properties:
+    - esco:isRelationshipFor
+    - esco:refersConcept
+    - esco:hasRelationshipType
+    :optional_properties: []
+    :additional_filter: ''
+  :esco:Structure:
+    :required_properties:
+    - esco:codeList
+    - esco:codedProperty
+    - esco:structureFor
+    :optional_properties:
+    - skos:prefLabel
+    - dcterms:description
+    :additional_filter: ''
+  :skos:Concept:
+      :required_properties:
+      - skosxl:prefLabel
+      - skos:inScheme
+      :optional_properties:
+        - skos:topConceptOf
+        - skosxl:altLabel
+        - skosxl:hiddenLabel
+        - skos:definition
+        - dcterms:description
+        - skos:scopeNote
+        - esco:relevantUrl
+        - skos:broader
+        - dcterms:subject
+        - skos:changeNote
+        - skos:historyNote
+        - dcterms:issued
+        - dcterms:modified
+        - dcterms:replaces
+        - dcterms:isReplacedBy
+        - dcterms:rightsHolder
+        - dcterms:creator
+        - esco:referenceLanguage
+        - isothes:status         # TODO this property is required, but not always present in etms
+        - dcterms:publisher       # TODO this property is required, but not always present in etms
+      :additional_filter: |
+        ?resource skos:inScheme ?scheme
+        FILTER (?scheme in (
+        <http://data.europa.eu/esco/concept-scheme/isco>,
+        <http://data.europa.eu/esco/concept-scheme/transversal>,
+        <http://data.europa.eu/esco/concept-scheme/ict-skill-groups>,
+        <http://data.europa.eu/esco/concept-scheme/skill-competence-type>,
+        <http://data.europa.eu/esco/concept-scheme/relationship-types>,
+        <http://data.europa.eu/esco/concept-scheme/skill-reuse-level>,
+        <http://data.europa.eu/esco/concept-scheme/label-role>))
+  :skos:ConceptScheme:
+    :required_properties:
+    - skos:prefLabel
+    :optional_properties:
+    - dcterms:title
+    - dcterms:description
+    - skos:scopeNote
+    - skos:editorialNote
+    - skos:changeNote
+    - skos:historyNote
+    :additional_filter: |
+            FILTER (?resource in (
+            <http://data.europa.eu/esco/concept-scheme/isco>,
+            <http://data.europa.eu/esco/concept-scheme/transversal>,
+            <http://data.europa.eu/esco/concept-scheme/ict-skill-groups>,
+            <http://data.europa.eu/esco/concept-scheme/skill-competence-type>,
+            <http://data.europa.eu/esco/concept-scheme/relationship-types>,
+            <http://data.europa.eu/esco/concept-scheme/skill-reuse-level>,
+            <http://data.europa.eu/esco/concept-scheme/label-role>))

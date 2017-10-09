@@ -1,0 +1,12 @@
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+Style/IfUnlessModifier:
+  MaxLineLength: 120
+Metrics/LineLength:
+  Max: 120
+Style/WhileUntilModifier:
+  MaxLineLength: 120  
+AllCops:
+ TargetRubyVersion: 2.3
